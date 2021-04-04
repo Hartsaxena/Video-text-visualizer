@@ -12,8 +12,8 @@ screen_dimensions = (2560, 1440)
 screen = pygame.display.set_mode(screen_dimensions)
 clock = pygame.time.Clock()
 
-default_font    = pygame.font.Font("fonts/Consolas.ttf", 12)
-prompt_font     = pygame.font.Font("fonts/Consolas.ttf", 30)
+default_font    = pygame.font.Font(os.path.join("fonts", "Consolas.ttf"), 12)
+prompt_font     = pygame.font.Font(os.path.join("fonts", "Consolas.ttf"), 30)
 
 def render_text(message, font, topleft, foregound=colors.BLACK, background=None, surface=screen, center=None):
     text = font.render(message, True, foregound, background)
