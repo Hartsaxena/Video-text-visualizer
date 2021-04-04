@@ -7,15 +7,7 @@ import translate
 import pygame
 pygame.init()
 
-
-screen_dimensions = (2560, 1440)
-screen = pygame.display.set_mode(screen_dimensions)
-clock = pygame.time.Clock()
-
-default_font    = pygame.font.Font(os.path.join("fonts", "Consolas.ttf"), 12)
-prompt_font     = pygame.font.Font(os.path.join("fonts", "Consolas.ttf"), 30)
-
-def render_text(message, font, topleft, foregound=colors.BLACK, background=None, surface=screen, center=None):
+def render_text(message, font, topleft, surface, foregound=colors.BLACK, background=None, center=None):
     text = font.render(message, True, foregound, background)
     text_rect = text.get_rect()
     if center is not None:
@@ -129,6 +121,12 @@ def main():
     frame_prompt_dimensions   = ((500, 100))
     frame_prompt_surface      = pygame.Surface(frame_prompt_dimensions)
     frame_prompt_center       = (frame_prompt_dimensions[0] // 2, frame_prompt_dimensions[1] // 2)
+    screen                    = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+    screen_dimensions         = screen.get_size()
+    clock                     = pygame.time.Clock()
+
+    default_font              = pygame.font.Font(os.path.join("fonts", "Consolas.ttf"), 12)
+    prompt_font               = pygame.font.Font(os.path.join("fonts", "Consolas.ttf"), 30)
     while True:
         screen.fill(colors.WHITE)
         for event in pygame.event.get():
@@ -141,13 +139,13 @@ def main():
             first_frame = False
             next_position = (0, 0)
             for message in full_message:
-                render_text(message, default_font, next_position)
+                render_text(message, default_font, next_position, screen)
                 text_positions.append(next_position)
                 next_position = (next_position[0], next_position[1] + 8)
         else:
             for message_index in range(len(full_message)):
                 message = full_message[message_index]
-                render_text(message, default_font, text_positions[message_index])
+                render_text(message, default_font, text_positions[message_index], screen)
         
         if frame_prompt:
             frame_prompt_surface.fill(colors.GRAY)

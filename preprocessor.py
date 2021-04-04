@@ -3,6 +3,7 @@ from pathlib import Path
 from tqdm import tqdm
 import cv2
 import os
+import shutil
 import pickle
 import translate
 
@@ -42,8 +43,12 @@ def gen_frames(workspace, video_path, frame_interval, text_file, data_file, scal
             frames.append(image_list)
             image.save(fullpath)
         count += 1
+    print("Dumping data into file...")
     with open(data_file, "wb") as data_file: # Save the video's frame data to pickle file.
         pickle.dump(frames, data_file)
+    print("Deleting Workspace files...")
+    for file_name in os.listdir(workspace):
+        os.remove(os.path.join(workspace, file_name))
     cv2.destroyAllWindows()
 
 
@@ -63,11 +68,11 @@ def total_frames(video):
 
 if __name__ == "__main__":
     os.chdir(Path(__file__).parent.absolute())
-    frame_interval = int(input("Please input the frame intervals: "))
-    scale = int(input("Please input the scale of the frames: "))
     video = input("Please input the path to the video: ")
     text_file_path = input("Please input the path to the text file with the text you would like to display: ")
     data_file_path = input("Please input the file to store the animation data: ")
+    frame_interval = int(input("Please input the frame intervals: "))
+    scale = int(input("Please input the scale of the frames: "))
     workspace = input("Please input the path of the folder you would like the program to work in\n(input \"default\" or nothing to work in default folder): ").lower()
     if workspace == "default" or workspace == "":
         workspace = "frames"
@@ -75,6 +80,14 @@ if __name__ == "__main__":
         data_file_path += ".data"
     if len(data_file_path.split(os.sep)) == 1:
         data_file_path = os.path.join("public_data", data_file_path)
+    if not (text_file_path.startswith("C:") or text_file_path.startswith("/")):
+        text_file_path = os.path.join("inputs", text_file_path)
     if not (video.startswith("C:") or video.startswith("/")):
         video = os.path.join("public_videos", video)
+    if not video.endswith(".mp4"):
+        print("Warning! The video you want to process isn't in .mp4 format. This can cause problems.")
+        print("It's suggested to convert your video to .mp4 format before continuing. There are tons of easy-to-use converters online.")
+        input("Press \"ENTER\" to continue.")
+    if frame_interval == 0:
+        frame_interval = 1
     gen_frames(workspace, video, frame_interval, text_file_path, data_file_path, scale_amount=scale)
