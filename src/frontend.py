@@ -41,8 +41,11 @@ def main(screen):
                     pause = not pause
 
                 if event.key == pygame.K_g and pause:
-                    frame_prompt = not frame_prompt
-                
+                    if frame_prompt:
+                        frame_prompt = False
+                    else:
+                        frame_prompt_ans = str(currentframe_index)
+                        frame_prompt = True                
                 if event.key == pygame.K_q:
                     end_time = perf_counter() + 3
                     end_timing = True

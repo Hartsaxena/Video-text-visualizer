@@ -1,4 +1,5 @@
 import colors
+import os
 import pygame
 import sys
 pygame.init()
@@ -35,6 +36,7 @@ def isvalidpath(path):
     except IOError:
         try:
             open(path, 'w')
+            os.remove(path)
             return True
         except:
             return False

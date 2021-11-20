@@ -10,7 +10,7 @@ import pygame
 pygame.init()
 
 
-_ = clipboard.paste() # For some reason, the first command using clipboard is slow, so we'll just put it here.
+clipboard.paste() # For some reason, the first command using clipboard is slow, so we'll just put it here.
 
 
 def main_menu(screen):
@@ -122,6 +122,19 @@ def check_data_file_name(data_file_name, return_bool=True):
             result = os.path.join("public_data", f"{result}.bdata")
 
     return (isvalidpath(result) and result.endswith(".bdata")) if return_bool else result
+
+
+def is_valid_path(file_path):
+    # checks if a file path is valid
+    if os.path.isfile(file_path):
+        return True
+    elif os.path.isdir(file_path):
+        return False
+    try:
+        open(file_path, 'a')
+    except FileNotFoundError:
+        return False
+    return True
 
 
 def get_render_values(surface):
@@ -260,7 +273,7 @@ def get_process_values(surface):
                     if current_prompt < len(all_prompts) - 1:
                         current_prompt += 1
                     else:
-                        video             = prompt_messages[video_prompt]
+                        video_path             = prompt_messages[video_prompt]
                         text_file_path    = prompt_messages[text_file_prompt]
                         data_file_path    = prompt_messages[data_file_prompt]
                         frame_interval    = prompt_messages[frame_interval_prompt]
@@ -271,13 +284,15 @@ def get_process_values(surface):
                         # Now we do some "smart" detection of files
                         os.makedirs(workspace, exist_ok=True)
 
-                        if not os.path.isabs(video):
-                            video = os.path.join("public_videos", video)
-                            if "." not in video:
-                                video += ".mp4"
+                        if not os.path.isabs(video_path):
+                            if "public_videos" not in video_path.split(os.sep):
+                                video_path = os.path.join("public_videos", video_path)
+                            if "." not in video_path:
+                                video_path += ".mp4"
 
                         if not os.path.isabs(text_file_path):
-                            text_file_path = os.path.join("inputs", text_file_path)
+                            if "public_text" not in text_file_path.split(os.sep):
+                                text_file_path = os.path.join("public_text", text_file_path)
                         
                         if color_type != "COLORED" and color_type != "GRAYSCALE":
                             color_type = "BINARY"
@@ -296,7 +311,7 @@ def get_process_values(surface):
 
                         # Check if all the values are valid.
                         conditions = [
-                            os.path.isfile(video),
+                            os.path.isfile(video_path),
                             os.path.isfile(text_file_path),
                             isvalidpath(data_file_path),
                             can_be(frame_interval, int),
@@ -307,6 +322,7 @@ def get_process_values(surface):
                             all_prompts       = [video_prompt, text_file_prompt, data_file_prompt, frame_interval_prompt, scale_prompt, color_type_prompt]
                             prompt_messages   = {prompt: "" for prompt in all_prompts}
                             current_prompt    = 0
+                            print(conditions)
                         else:
                             frame_interval    = int(frame_interval)
                             scale             = int(scale)
@@ -332,5 +348,5 @@ def get_process_values(surface):
         pygame.display.update()
         limit.tick(60)
 
-    result = (workspace, video, text_file_path, data_file_path, frame_interval, scale, color_type)
+    result = (workspace, video_path, text_file_path, data_file_path, frame_interval, scale, color_type)
     return result

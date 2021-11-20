@@ -11,15 +11,15 @@ cmd_keys      = [pygame.K_LSUPER, pygame.K_RSUPER, pygame.K_RCTRL, pygame.K_LCTR
 frame_prompt_dimensions   = ((500, 100))
 
 # Fonts
-font_size       = int(game_surface.get_height() / 1440)
+font_size       = game_surface.get_height() / 1440
 
 consolas_sizes = {
     "default": 12,
     "prompt": 30,
 }
 
-default_font    = pygame.font.Font(os.path.join("fonts", "Consolas.ttf"), consolas_sizes["default"] * font_size)
-prompt_font     = pygame.font.Font(os.path.join("fonts", "Consolas.ttf"), consolas_sizes["prompt"] * font_size)
-console_font    = pygame.font.Font(os.path.join("fonts", "FiraCode.ttf"), 30 * font_size)
+default_font    = pygame.font.Font(os.path.join("fonts", "Consolas.ttf"), int(consolas_sizes["default"] * font_size))
+prompt_font     = pygame.font.Font(os.path.join("fonts", "Consolas.ttf"), int(consolas_sizes["prompt"] * font_size))
+console_font    = pygame.font.Font(os.path.join("fonts", "FiraCode.ttf"), int(30 * font_size))
 
 consolas_widths = {use: 55/100 * font_size for use, font_size in consolas_sizes.items()} # Consolas font's width if 55% font size. At least, I hope the internet didn't lie.
